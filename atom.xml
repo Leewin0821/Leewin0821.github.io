@@ -4,7 +4,7 @@
   <subtitle><![CDATA[□PM □UX ☑Dev]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://leewin0821.github.io/"/>
-  <updated>2014-10-20T17:49:31.170Z</updated>
+  <updated>2014-10-20T18:15:16.761Z</updated>
   <id>http://leewin0821.github.io/</id>
   
   <author>
@@ -13,6 +13,20 @@
   </author>
   
   <generator uri="http://zespia.tw/hexo/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[【Leewin讲经历】】从ThoughtWorks手中拿Offer]]></title>
+    <link href="http://leewin0821.github.io/2014/10/21/%E3%80%90Leewin%E8%AE%B2%E7%BB%8F%E5%8E%86%E3%80%91%E4%BB%8EThoughtWorks%E6%89%8B%E4%B8%AD%E6%8B%BFOffer/"/>
+    <id>http://leewin0821.github.io/2014/10/21/【Leewin讲经历】从ThoughtWorks手中拿Offer/</id>
+    <published>2014-10-20T18:12:31.000Z</published>
+    <updated>2014-10-20T18:14:59.000Z</updated>
+    <content type="html"><![CDATA[<h3 id="面试">面试</h3>
+]]></content>
+    
+    
+      <category term="Experience" scheme="http://leewin0821.github.io/tags/Experience/"/>
+    
+  </entry>
   
   <entry>
     <title><![CDATA[Hello World]]></title>
