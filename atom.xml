@@ -4,7 +4,7 @@
   <subtitle><![CDATA[□PM □UX ☑Dev]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://leewin0821.github.io/"/>
-  <updated>2015-02-07T04:20:28.435Z</updated>
+  <updated>2015-03-04T17:04:21.920Z</updated>
   <id>http://leewin0821.github.io/</id>
   
   <author>
@@ -13,6 +13,181 @@
   </author>
   
   <generator uri="http://zespia.tw/hexo/">Hexo</generator>
+  
+  <entry>
+    <title><![CDATA[【Leewin的笔记】Regex Note]]></title>
+    <link href="http://leewin0821.github.io/2015/03/04/Regex%20Note/"/>
+    <id>http://leewin0821.github.io/2015/03/04/Regex Note/</id>
+    <published>2015-03-04T05:12:31.000Z</published>
+    <updated>2015-03-04T17:03:11.000Z</updated>
+    <content type="html"><![CDATA[<ul>
+<li>为了在Java中传递模式里的反斜线字符<strong><em>(/)</em></strong>,应该使用双反斜线<strong><em>(//)</em></strong></li>
+<li>如果想把圆括号解释为圆括号，在需要在前面用双反斜线<strong><em>(//)</em></strong></li>
+<li>精确查找单词，如hi，需要<strong><em>\bhi\b</em></strong></li>
+<li><strong><em>.</em></strong> 是另一个元字符，匹配<code>除了换行符意外的任意字符</code></li>
+<li><strong><em> </em> *</strong> 同样是元字符，指定<code>*前面的内容可以连续重复使用任意次数以使整个表达式得到匹配</code></li>
+<li><strong><em> .</em> *</strong> 连在一起就表示任意数量的不包含换行的字符</li>
+<li>+和<em>都是元字符，`+表示匹配重复一次或者多次，</em>表示重复任意次（可能是0次）`</li>
+</ul>
+]]></content>
+    
+    
+      <category term="Tech" scheme="http://leewin0821.github.io/tags/Tech/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[【Leewin的笔记】Spring MVC Note]]></title>
+    <link href="http://leewin0821.github.io/2015/03/04/Spring%20MVC%20Note/"/>
+    <id>http://leewin0821.github.io/2015/03/04/Spring MVC Note/</id>
+    <published>2015-03-04T04:13:31.000Z</published>
+    <updated>2015-03-04T17:02:45.000Z</updated>
+    <content type="html"><![CDATA[<h3 id="Request生命周期">Request生命周期</h3>
+<ul>
+<li><p>Request会由DispatcherServlet前端控制器（单例）分配给* Controller控制器（由HandlerMapping处理器通过请求携带的URL信息来确定映射）。</p>
+</li>
+<li><p>Controller会卸下Request的负载，处理信息。在Controller完成逻辑处理后，会产生需要返回用户并在浏览器上显示的信息，即Model模型。最后Controller将Model打包，并标示出用于渲染输出的View名称，Controller接下来将Model和View名称发送回DispatcherServlet。</p>
+</li>
+<li><p>DispatcherServlet会使用ViewResolver视图解析器来为View名称匹配一个特定的View视图实现，它可能也可能不是JSP。随后交付Model数据给View。View使用Model数据渲染输出，并通过这个输出将响应对象传递给客户端。</p>
+</li>
+</ul>
+<h3 id="配置DispatcherServlet">配置DispatcherServlet</h3>
+<ul>
+<li>配置DispatcherServlet的第一步是在web.xml中放入<code>&lt;servlet&gt;</code>声明:       </li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="title">servlet</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="title">servlet-name</span>&gt;</span>application<span class="tag">&lt;/<span class="title">servlet-name</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="title">servlet-class</span>&gt;</span></div><div class="line">		org.springframework.web.servlet.DispatcherServlet</div><div class="line">	<span class="tag">&lt;/<span class="title">servlet-class</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="title">load-on-startup</span>&gt;</span>1<span class="tag">&lt;/<span class="title">load-on-startup</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="title">servlet</span>&gt;</span></div></pre></td></tr></table></figure>
+
+<p>默认情况下，DispatcherServlet在加载时会从一个基于这个Servlet名字的XML文件中加载Spring应用上下文。本例中即为application-servlet.xml（位于WEB-INF目录下）。</p>
+<ul>
+<li><p>一般推荐将DispatcherServlet映射到/，声明了它会作为默认的servlet并且会处理所有的请求，包括对静态资源的请求（Spring的mvc命名空间包含的<code>&lt;mvc:resource&gt;</code>元素处理静态资源的请求）。</p>
+</li>
+<li><p><code>&lt;mvc:resources mapping=“*/resources/**” location=“/resources/*”&gt;</code>表示所有以/resources路径开头的请求（包括其一下的子路径）都会自动由应用程序根目录下的/resources目录提供服务。</p>
+</li>
+</ul>
+<h3 id="Controller的用法">Controller的用法</h3>
+<ul>
+<li><p>控制器类需要在类之前加上@Controller注解。@Controller是@Compnent注解的一种具体化，也就是说<code>&lt;context:component-scan&gt;</code>将查找使用@Controller注解的类并将其注册为Bean，就像它们使用@Component注解那样。因此需要在application-servlet.xml文件中配置一个 <code>&lt;context:component-scan&gt;</code>来扫描控制器类所在的文件夹。</p>
+</li>
+<li><p>按照约定优于配置的开发模式，Controller返回的逻辑视图名称，假设为“home”，会被Resolver自动加上前后缀来确定其JSP文件在Web应用程序中模板的路径。假设在application-servlet.xml中：  </p>
+</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="title">bean</span> <span class="attribute">class</span>=<span class="value">...</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="title">property</span> <span class="attribute">name</span>=<span class="value">"prefix"</span> <span class="attribute">value</span>=<span class="value">"/WEB-INF/views/"</span> /&gt;</span></div><div class="line"><span class="tag">&lt;<span class="title">property</span> <span class="attribute">name</span>=<span class="value">"suffix"</span> <span class="attribute">value</span>=<span class="value">".jsp"</span> /&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="title">bean</span>&gt;</span></div></pre></td></tr></table></figure>
+
+<p>那么View路径就应该是<em>/WEB-INF/views/home.jsp</em> 。</p>
+<ul>
+<li>为了创建被所有Servlet和Filter共享的Spring容器，需要使用Servlet监听器。ContextLoaderListener能够加载其他的配置文件到一个Spring Context中，因此先在web.xml中声明:</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="title">listener</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="title">listener-class</span>&gt;</span>  </div><div class="line">		org.springframework.web.context.ContextLoaderListener</div><div class="line">	<span class="tag">&lt;/<span class="title">listener-class</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="title">listener</span>&gt;</span></div></pre></td></tr></table></figure>
+
+<p>然后需要给ContextLoaderListener指定加载的配置文件，默认为 <em>/WEB-INF/applicationContext.xml</em> 这个Spring配置文件。但是这个文件本身没有做到将Context拆分为多个片段。所以在需要重写默认实现。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="title">context-param</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="title">param-name</span>&gt;</span>contextConfigLocation<span class="tag">&lt;/<span class="title">param-name</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="title">param-value</span>&gt;</span></div><div class="line">		/WEB-INF/application-security.xml</div><div class="line">		classpath:service-context.xml</div><div class="line">		classpath:persistence-context.xml</div><div class="line">		classpath:dataSource-context.xml</div><div class="line">	<span class="tag">&lt;/<span class="title">param-value</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="title">context-param</span>&gt;</span></div></pre></td></tr></table></figure>
+
+<ul>
+<li><p>在处理方法的参数前面加<code>@RequestParam</code>注解，如<code>@RequestParam(&quot;spitter&quot;) String username</code>，表明参数username的值应该根据Request中名为spitter的查询参数来获取。基于约定，如果处理方法的所有参数没有注解的话，将绑定到同名的查询参数上。在本例子中，如果处理方法参数名为spitter或者查询参数名为username，这样就可以省略掉<code>@RequestParam</code>注解了。如<code>@RequestParam(value=&quot;image&quot;, required=false) MultipartFile image</code>，表明参数image为MultipartFile类型，并且这个参数不是必需的。</p>
+</li>
+<li><p>如果在Controller中，一个方法，如</p>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="annotation">@RequestMapping</span>(method=RequestMethod.GET, params=<span class="string">"new"</span>)</div><div class="line"><span class="keyword">public</span> String <span class="title">createSpitterProfile</span>(Model model) {</div><div class="line">	model.addAttribute(<span class="keyword">new</span> Spitter());</div><div class="line">	<span class="keyword">return</span> <span class="string">"spitters/edit"</span>;</div><div class="line">	}</div></pre></td></tr></table></figure>
+
+<p>它的<code>@RequestMapping</code>注解没有指定路径的话，那么这个方法会处理类级别<code>@RequestMapping</code>指定的路径，假设为 <em>/spitters</em> 。此外，将params属性设置为new，这意味着这个方法只处理对 <em>/spitters</em> 的HTTP GET请求并要求请求中必须包含名为new的查询参数。如下所示：</p>
+<figure class="highlight url"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">http</span>://localhost:<span class="number">8080</span>/Spitter/spitters?<span class="built_in">new</span></div></pre></td></tr></table></figure>
+
+<p>其中 <em>/Spitter</em> 由Servlet上下文决定，<em>/spitters</em> 由上面的Controller来处理，<em>?new</em> 就是“new”查询参数。</p>
+<ul>
+<li><p>View，如JSP，引用的对象存放在Model模型中。例如JSP的<code>&lt;c:forEach&gt;</code>标签的items属性以<code>${spittleList}</code>引用了Spittle列表，而spittleList就是Model的addAttribute()方法赋予它的名字。</p>
+</li>
+<li><p>在上面所指定的edit.jsp中，声明并使用Spring的表单绑定库：</p>
+</li>
+</ul>
+<figure class="highlight jsp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">&lt;%@ taglib prefix=<span class="string">"form"</span> uri=<span class="string">"http://www.springframework.org/tags/form"</span>%&gt;</div><div class="line">...</div><div class="line">&lt;form:form method=<span class="string">"POST"</span> modelAttribute=<span class="string">"spitter"</span> enctype=<span class="string">"multipart/form-data"</span>&gt;</div><div class="line">...</div><div class="line">&lt;form:input path=<span class="string">"fullName"</span> size=<span class="string">"15"</span> id=<span class="string">"user_full_name"</span>/&gt;</div><div class="line">...</div><div class="line">&lt;form:password path=<span class="string">"password"</span> size=<span class="string">"30"</span> showPassword=<span class="string">"true"</span> id=<span class="string">"user_password"</span>&gt;</div></pre></td></tr></table></figure>
+
+<p><code>&lt;form:form&gt;</code>标签将上面createSpitterProfile()方法所放入Model的Spitter对象（通过modelAttribute属性来标识）绑定到表单中的各个输入域。通过将enctype设置为 <em>multipart/form-data</em>, 每个输入域都将作为POST请求的不同部分进行提交，而不仅仅是其他的名称-值。这使得在其中的某一部分包含上传的图片文件数据成为可能。 <code>&lt;form:input&gt;</code>和<code>&lt;form:password&gt;</code>标签的path属性引用表单所绑定的Spitter对象的属性。当提交表单时，这些输入域中的值会放到Spitter对象中并提交到服务器进行处理。</p>
+<ul>
+<li>在Controller中，如果</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">return</span> <span class="string">"redirect:/spitters/"</span> + spitter.getUsername();</div></pre></td></tr></table></figure>
+
+<p>那么执行该方法之后，请求将重新定向到指定路径，以防用户点击浏览器“刷新”按钮之后会造成表单的重复提交。</p>
+<ul>
+<li>谁来响应 <em>/spitters/{username}</em> 请求是个大问题，本例采用在负责对应操作的Controller的方法上打注释来解决：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="annotation">@RequestMapping</span>(value=<span class="string">"/{username}"</span>, method=RequestMethod.GET)</div><div class="line"><span class="keyword">public</span> String <span class="title">showSpitterProfile</span>(@PathVariable String username, Model model) {</div><div class="line">model.addAttribute(spitterService.getSpitter(username));</div><div class="line"><span class="keyword">return</span> <span class="string">"spitters/view"</span>;</div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p>路径中{username}部分实际上是占位符，它对应使用了@PathVariable注解的username方法参数。请求路径中的该位置的值将作为username的值传递进去。</p>
+]]></content>
+    
+    
+      <category term="Tech" scheme="http://leewin0821.github.io/tags/Tech/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[【Leewin的笔记】Dependency Injection Note]]></title>
+    <link href="http://leewin0821.github.io/2015/03/04/Dependency%20Injection%20Note/"/>
+    <id>http://leewin0821.github.io/2015/03/04/Dependency Injection Note/</id>
+    <published>2015-03-04T04:12:31.000Z</published>
+    <updated>2015-03-04T17:02:03.000Z</updated>
+    <content type="html"><![CDATA[<h3 id="控制反转">控制反转</h3>
+<p>假设有一个MovieLister类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">class MovieLister...</div><div class="line">    <span class="keyword">public</span> Movie[] <span class="title">moviesDirectedBy</span>(String arg)</div><div class="line">    {</div><div class="line">        List allMovies = finder.findAll();</div><div class="line">        <span class="keyword">for</span> (Iterator it = allMovies.iterator(); it.hasNext();)</div><div class="line">        {</div><div class="line">            Movie movie = (Movie) it.next();</div><div class="line">            <span class="keyword">if</span> (!movie.getDirector().equals(arg))</div><div class="line">            {</div><div class="line">                it.remove();</div><div class="line">            }</div><div class="line">        }</div><div class="line">        <span class="keyword">return</span> (Movie[]) allMovies.toArray(<span class="keyword">new</span> Movie[allMovies.size()]);</div><div class="line">    }</div></pre></td></tr></table></figure>
+
+<p>该类负责列出某位导演执导的所有影片，它依赖于MovieFinder接口和它的具体实现类。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">MovieFinder</span></span></div><div class="line">{</div><div class="line">    List findAll();</div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p>目前看来还好，两个对象之间没有什么耦合关系，但是实际要搜寻影片时就必须使用MovieFinder的某个具体子类。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">class MovieLister...</div><div class="line">    <span class="keyword">private</span> MovieFinder finder;</div><div class="line">    <span class="keyword">public</span> <span class="title">MovieLister</span>()</div><div class="line">    {</div><div class="line">        finder = <span class="keyword">new</span> ColonDelimitedMovieFinder(<span class="string">"movies1.txt"</span>);</div><div class="line">    }</div></pre></td></tr></table></figure>
+
+<p>问题就出在，如果想更换不同的Finder，如针对SQL，xml，web service等不同的Finder，那么必不可少就需要新的类来获取数据。如果我们想保留MovieLister里面干净漂亮的代码，又希望降低耦合性，MovieLister类只依赖于接口，这样的话如何获得一个MovieFinder子类的实例就成了问题。</p>
+<p>在真实的系统中，可能存在非常多的服务和组件，如果我们希望以不同的方式部署这个系统，就需要用插件机制来处理服务之间的交互过程，这样才能在不同的部署方案中使用不同的实现。轻量级容器解决这个问题的手段都是采用控制反转模式。那么问题来了，<strong>控制反转究竟反转了哪方面的控制？</strong></p>
+<p>在Martin Fowler看来，轻量级容器反转的是<strong>如何定位插件的具体实现。</strong></p>
+<h3 id="依赖注入">依赖注入</h3>
+<p>依赖注入模式的基本思想是：<strong>用一个单独的对象（装配器）来获得MovieFinder的一个合适的实现，并将其实例赋给MovieLister类的一个字段。</strong></p>
+<p>依赖注入的形式主要有三种：</p>
+<ul>
+<li>构造函数注入（Constructor Injection）</li>
+<li>设值方法注入（Setter Injection）</li>
+<li>接口注入（Interface Injection）</li>
+</ul>
+<p>下面举例使用Spring进行Setter Injection：</p>
+<ul>
+<li>第一步，在MovieLister类中定义setter方法</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">class MovieLister...</div><div class="line">    <span class="keyword">private</span> MovieFinder finder;</div><div class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setFinder</span>(MovieFinder finder)</div><div class="line">    {</div><div class="line">        <span class="keyword">this</span>.finder = finder;</div><div class="line">    }</div></pre></td></tr></table></figure>
+
+<ul>
+<li>第二步，相似地，在MovieFinder中定义setter方法</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">class ColonMovieFinder...</div><div class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setFilename</span>(String filename)</div><div class="line">    {</div><div class="line">        <span class="keyword">this</span>.filename = filename;</div><div class="line">    }</div></pre></td></tr></table></figure>
+
+<ul>
+<li>第三步，设定配置文件spring.xml，这里使用XML文件配置</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="title">beans</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="title">bean</span> <span class="attribute">id</span>=<span class="value">"MovieLister"</span> <span class="attribute">class</span>=<span class="value">"spring.MovieLister"</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="title">property</span> <span class="attribute">name</span>=<span class="value">"finder"</span>&gt;</span></div><div class="line">            <span class="tag">&lt;<span class="title">ref</span> <span class="attribute">local</span>=<span class="value">"MovieFinder"</span>/&gt;</span></div><div class="line">        <span class="tag">&lt;/<span class="title">property</span>&gt;</span></div><div class="line">    <span class="tag">&lt;/<span class="title">bean</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="title">bean</span> <span class="attribute">id</span>=<span class="value">"MovieFinder"</span> <span class="attribute">class</span>=<span class="value">"spring.ColonMovieFinder"</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="title">property</span> <span class="attribute">name</span>=<span class="value">"filename"</span>&gt;</span></div><div class="line">            <span class="tag">&lt;<span class="title">value</span>&gt;</span>movies1.txt<span class="tag">&lt;/<span class="title">value</span>&gt;</span></div><div class="line">        <span class="tag">&lt;/<span class="title">property</span>&gt;</span></div><div class="line">    <span class="tag">&lt;/<span class="title">bean</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="title">beans</span>&gt;</span></div></pre></td></tr></table></figure>
+
+<ul>
+<li>测试代码如下</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testWithSpring</span>() <span class="keyword">throws</span> Exception</div><div class="line">    {</div><div class="line">        ApplicationContext ctx = <span class="keyword">new</span> FileSystemXmlApplicationContext(<span class="string">"spring.xml"</span>);</div><div class="line">        MovieLister lister = (MovieLister) ctx.getBean(<span class="string">"MovieLister"</span>);</div><div class="line">        Movie[] movies = lister.moviesDirectedBy(<span class="string">"Sergio Leone"</span>);</div><div class="line">        assertEquals(<span class="string">"Once Upon a Time in the West"</span>, movies[<span class="number">0</span>].getTitle());</div><div class="line">    }</div></pre></td></tr></table></figure>
+
+<p>使用依赖注入最大的好处在于：<strong>它消除了MovieLister类对具体MovieFinder实现类的依赖。</strong></p>
+<h3 id="构造函数注入_VS-_设值方法注入">构造函数注入 VS. 设值方法注入</h3>
+<p>构造函数注入和设值方法注入之间的选择反映的是：<strong>应该在哪里填充对象的字段，构造函数还是设值方法？</strong></p>
+<p>构造函数初始化的一个好处是：你可以隐藏任何不可变的字段，只要不为它提供设值方法就行了。如果某个字段不应该被改变，那么它就不应该有设值方法。但是如果参数太多，构造函数就会显得凌乱不堪。这个地方正好是Factory Method模式适用的场合，工厂方法可以借助多个私有构造函数和设值方法的组合来完成自己的任务。问题是工厂往往以静态方法的形式出现，无法在接口中声明它们。也可以创建一个工厂类，但那就变成了另一个服务实体。</p>
+<p>如果对象有多个构造函数，对象之间又存在继承关系，事情就会变得非常讨厌。为了让所有东西都正确地初始化，你必须将对子类构造函数的调用转发给超类的构造函数，然后处理自己的参数。这可能造成构造函数规模的进一步膨胀。</p>
+<h3 id="代码配置_VS-_配置文件">代码配置 VS. 配置文件</h3>
+<p>对大多数需要在多处部署的应用程序来说，一个单独的配置文件更合适。</p>
+<p>相对的，如果应用程序的组装非常复杂，涉及大量的条件步骤，配置逻辑变得复杂的话，那么就应该用一种合适的语言来描述配置信息，使程序逻辑更清晰。然后变成一个构造器类（builder）来完成装配工作。</p>
+<h3 id="分离配置与使用">分离配置与使用</h3>
+<p>所有这一切的关键都在于：服务的配置应该与使用分开，正如基本的设计原则：分离接口和实现。在面向对象程序里，我们在一个地方用条件逻辑来决定具体实例化哪一个类，以后的条件分支都由多态来实现，而不是继续重复前面的条件逻辑，这就是分离接口与实现的原则。</p>
+<h3 id="结论">结论</h3>
+<p>开发的组件需要交给多个应用程序使用时，依赖注入模式会是更好的选择。在DI的风格中，首选构造函数注入，如果遇到了某些特定的问题，再改用设值方法注入。最重要的是将服务的配置和应用程序内部对服务的使用分离.</p>
+]]></content>
+    
+    
+      <category term="Tech" scheme="http://leewin0821.github.io/tags/Tech/"/>
+    
+  </entry>
   
   <entry>
     <title><![CDATA[【Leewin讲经历】从ThoughtWorks手中拿Offer]]></title>

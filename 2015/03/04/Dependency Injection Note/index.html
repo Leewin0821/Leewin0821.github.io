@@ -1,0 +1,430 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>【Leewin的笔记】Dependency Injection Note | Leewin’s Blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="Leeiwn">
+    
+    <meta name="description" itemprop="description" content="自己学习DI的一些随笔">
+    
+    
+    
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="LeewinDreamer" />
+    <meta name="twitter:title" content="【Leewin的笔记】Dependency Injection Note | Leewin’s Blog" />
+      
+        <meta name="twitter:description" content="自己学习DI的一些随笔" />
+      
+    
+    
+    <link rel="alternative" href="http://leewin0821.github.io/atom.xml" title="Leewin’s Blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/Wolf.png">
+    <link rel="apple-touch-icon-precomposed" href="/img/Wolf.png">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="Leewin’s Blog" title="Leewin’s Blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Leewin’s Blog">Leewin’s Blog</a></h1>
+				<h2 class="blog-motto">□PM □UX ☑Dev</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="About/home.html">About</a></li>
+					
+					<li>
+					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="text" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:leewin0821.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/03/04/Dependency Injection Note/" title="【Leewin的笔记】Dependency Injection Note" itemprop="url">【Leewin的笔记】Dependency Injection Note</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="https://plus.google.com/104152981659148290000?rel=author" title="Leeiwn" target="_blank" itemprop="author">Leeiwn</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2015-03-04T04:12:31.000Z" itemprop="datePublished">3月 4 2015</time>
+    更新日期:<time datetime="2015-03-04T17:02:03.000Z" itemprop="dateModified">3月 5 2015</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#控制反转"><span class="toc-number">1.</span> <span class="toc-text">控制反转</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#依赖注入"><span class="toc-number">2.</span> <span class="toc-text">依赖注入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#构造函数注入_VS-_设值方法注入"><span class="toc-number">3.</span> <span class="toc-text">构造函数注入 VS. 设值方法注入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#代码配置_VS-_配置文件"><span class="toc-number">4.</span> <span class="toc-text">代码配置 VS. 配置文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#分离配置与使用"><span class="toc-number">5.</span> <span class="toc-text">分离配置与使用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#结论"><span class="toc-number">6.</span> <span class="toc-text">结论</span></a></li></ol>
+		</div>
+		
+		<h3 id="控制反转">控制反转</h3>
+<p>假设有一个MovieLister类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">class MovieLister...</div><div class="line">    <span class="keyword">public</span> Movie[] <span class="title">moviesDirectedBy</span>(String arg)</div><div class="line">    {</div><div class="line">        List allMovies = finder.findAll();</div><div class="line">        <span class="keyword">for</span> (Iterator it = allMovies.iterator(); it.hasNext();)</div><div class="line">        {</div><div class="line">            Movie movie = (Movie) it.next();</div><div class="line">            <span class="keyword">if</span> (!movie.getDirector().equals(arg))</div><div class="line">            {</div><div class="line">                it.remove();</div><div class="line">            }</div><div class="line">        }</div><div class="line">        <span class="keyword">return</span> (Movie[]) allMovies.toArray(<span class="keyword">new</span> Movie[allMovies.size()]);</div><div class="line">    }</div></pre></td></tr></table></figure>
+
+<p>该类负责列出某位导演执导的所有影片，它依赖于MovieFinder接口和它的具体实现类。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">MovieFinder</span></span></div><div class="line">{</div><div class="line">    List findAll();</div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p>目前看来还好，两个对象之间没有什么耦合关系，但是实际要搜寻影片时就必须使用MovieFinder的某个具体子类。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">class MovieLister...</div><div class="line">    <span class="keyword">private</span> MovieFinder finder;</div><div class="line">    <span class="keyword">public</span> <span class="title">MovieLister</span>()</div><div class="line">    {</div><div class="line">        finder = <span class="keyword">new</span> ColonDelimitedMovieFinder(<span class="string">"movies1.txt"</span>);</div><div class="line">    }</div></pre></td></tr></table></figure>
+
+<p>问题就出在，如果想更换不同的Finder，如针对SQL，xml，web service等不同的Finder，那么必不可少就需要新的类来获取数据。如果我们想保留MovieLister里面干净漂亮的代码，又希望降低耦合性，MovieLister类只依赖于接口，这样的话如何获得一个MovieFinder子类的实例就成了问题。</p>
+<p>在真实的系统中，可能存在非常多的服务和组件，如果我们希望以不同的方式部署这个系统，就需要用插件机制来处理服务之间的交互过程，这样才能在不同的部署方案中使用不同的实现。轻量级容器解决这个问题的手段都是采用控制反转模式。那么问题来了，<strong>控制反转究竟反转了哪方面的控制？</strong></p>
+<p>在Martin Fowler看来，轻量级容器反转的是<strong>如何定位插件的具体实现。</strong></p>
+<h3 id="依赖注入">依赖注入</h3>
+<p>依赖注入模式的基本思想是：<strong>用一个单独的对象（装配器）来获得MovieFinder的一个合适的实现，并将其实例赋给MovieLister类的一个字段。</strong></p>
+<p>依赖注入的形式主要有三种：</p>
+<ul>
+<li>构造函数注入（Constructor Injection）</li>
+<li>设值方法注入（Setter Injection）</li>
+<li>接口注入（Interface Injection）</li>
+</ul>
+<p>下面举例使用Spring进行Setter Injection：</p>
+<ul>
+<li>第一步，在MovieLister类中定义setter方法</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">class MovieLister...</div><div class="line">    <span class="keyword">private</span> MovieFinder finder;</div><div class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setFinder</span>(MovieFinder finder)</div><div class="line">    {</div><div class="line">        <span class="keyword">this</span>.finder = finder;</div><div class="line">    }</div></pre></td></tr></table></figure>
+
+<ul>
+<li>第二步，相似地，在MovieFinder中定义setter方法</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">class ColonMovieFinder...</div><div class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setFilename</span>(String filename)</div><div class="line">    {</div><div class="line">        <span class="keyword">this</span>.filename = filename;</div><div class="line">    }</div></pre></td></tr></table></figure>
+
+<ul>
+<li>第三步，设定配置文件spring.xml，这里使用XML文件配置</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="title">beans</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="title">bean</span> <span class="attribute">id</span>=<span class="value">"MovieLister"</span> <span class="attribute">class</span>=<span class="value">"spring.MovieLister"</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="title">property</span> <span class="attribute">name</span>=<span class="value">"finder"</span>&gt;</span></div><div class="line">            <span class="tag">&lt;<span class="title">ref</span> <span class="attribute">local</span>=<span class="value">"MovieFinder"</span>/&gt;</span></div><div class="line">        <span class="tag">&lt;/<span class="title">property</span>&gt;</span></div><div class="line">    <span class="tag">&lt;/<span class="title">bean</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="title">bean</span> <span class="attribute">id</span>=<span class="value">"MovieFinder"</span> <span class="attribute">class</span>=<span class="value">"spring.ColonMovieFinder"</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="title">property</span> <span class="attribute">name</span>=<span class="value">"filename"</span>&gt;</span></div><div class="line">            <span class="tag">&lt;<span class="title">value</span>&gt;</span>movies1.txt<span class="tag">&lt;/<span class="title">value</span>&gt;</span></div><div class="line">        <span class="tag">&lt;/<span class="title">property</span>&gt;</span></div><div class="line">    <span class="tag">&lt;/<span class="title">bean</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="title">beans</span>&gt;</span></div></pre></td></tr></table></figure>
+
+<ul>
+<li>测试代码如下</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">testWithSpring</span>() <span class="keyword">throws</span> Exception</div><div class="line">    {</div><div class="line">        ApplicationContext ctx = <span class="keyword">new</span> FileSystemXmlApplicationContext(<span class="string">"spring.xml"</span>);</div><div class="line">        MovieLister lister = (MovieLister) ctx.getBean(<span class="string">"MovieLister"</span>);</div><div class="line">        Movie[] movies = lister.moviesDirectedBy(<span class="string">"Sergio Leone"</span>);</div><div class="line">        assertEquals(<span class="string">"Once Upon a Time in the West"</span>, movies[<span class="number">0</span>].getTitle());</div><div class="line">    }</div></pre></td></tr></table></figure>
+
+<p>使用依赖注入最大的好处在于：<strong>它消除了MovieLister类对具体MovieFinder实现类的依赖。</strong></p>
+<h3 id="构造函数注入_VS-_设值方法注入">构造函数注入 VS. 设值方法注入</h3>
+<p>构造函数注入和设值方法注入之间的选择反映的是：<strong>应该在哪里填充对象的字段，构造函数还是设值方法？</strong></p>
+<p>构造函数初始化的一个好处是：你可以隐藏任何不可变的字段，只要不为它提供设值方法就行了。如果某个字段不应该被改变，那么它就不应该有设值方法。但是如果参数太多，构造函数就会显得凌乱不堪。这个地方正好是Factory Method模式适用的场合，工厂方法可以借助多个私有构造函数和设值方法的组合来完成自己的任务。问题是工厂往往以静态方法的形式出现，无法在接口中声明它们。也可以创建一个工厂类，但那就变成了另一个服务实体。</p>
+<p>如果对象有多个构造函数，对象之间又存在继承关系，事情就会变得非常讨厌。为了让所有东西都正确地初始化，你必须将对子类构造函数的调用转发给超类的构造函数，然后处理自己的参数。这可能造成构造函数规模的进一步膨胀。</p>
+<h3 id="代码配置_VS-_配置文件">代码配置 VS. 配置文件</h3>
+<p>对大多数需要在多处部署的应用程序来说，一个单独的配置文件更合适。</p>
+<p>相对的，如果应用程序的组装非常复杂，涉及大量的条件步骤，配置逻辑变得复杂的话，那么就应该用一种合适的语言来描述配置信息，使程序逻辑更清晰。然后变成一个构造器类（builder）来完成装配工作。</p>
+<h3 id="分离配置与使用">分离配置与使用</h3>
+<p>所有这一切的关键都在于：服务的配置应该与使用分开，正如基本的设计原则：分离接口和实现。在面向对象程序里，我们在一个地方用条件逻辑来决定具体实例化哪一个类，以后的条件分支都由多态来实现，而不是继续重复前面的条件逻辑，这就是分离接口与实现的原则。</p>
+<h3 id="结论">结论</h3>
+<p>开发的组件需要交给多个应用程序使用时，依赖注入模式会是更好的选择。在DI的风格中，首选构造函数注入，如果遇到了某些特定的问题，再改用设值方法注入。最重要的是将服务的配置和应用程序内部对服务的使用分离.</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Tech/">Tech</a>
+  </div>
+
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://leewin0821.github.io/2015/03/04/Dependency Injection Note/" data-title="【Leewin的笔记】Dependency Injection Note | Leewin’s Blog" data-tsina="koalaleewin" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/03/04/Spring MVC Note/" title="【Leewin的笔记】Spring MVC Note">
+  <strong>PREVIOUS:</strong><br/>
+  <span>
+  【Leewin的笔记】Spring MVC Note</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2014/10/21/【Leewin讲经历】从ThoughtWorks手中拿Offer/"  title="【Leewin讲经历】从ThoughtWorks手中拿Offer">
+ <strong>NEXT:</strong><br/> 
+ <span>【Leewin讲经历】从ThoughtWorks手中拿Offer
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section class="comment">
+	<div class="ds-thread"></div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+  <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#控制反转"><span class="toc-number">1.</span> <span class="toc-text">控制反转</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#依赖注入"><span class="toc-number">2.</span> <span class="toc-text">依赖注入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#构造函数注入_VS-_设值方法注入"><span class="toc-number">3.</span> <span class="toc-text">构造函数注入 VS. 设值方法注入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#代码配置_VS-_配置文件"><span class="toc-number">4.</span> <span class="toc-text">代码配置 VS. 配置文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#分离配置与使用"><span class="toc-number">5.</span> <span class="toc-text">分离配置与使用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#结论"><span class="toc-number">6.</span> <span class="toc-text">结论</span></a></li></ol>
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/Experience/" title="Experience">Experience<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Tech/" title="Tech">Tech<sup>3</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  
+  <div class="tagcloudlist">
+    <p class="asidetitle">标签云</p>
+    <div class="tagcloudlist clearfix">
+       <a href="/tags/Experience/" style="font-size: 10.00px; color: #7dc3de;">Experience</a><a href="/tags/Tech/" style="font-size: 20.00px; color: #800080;">Tech</a>
+    </div>
+  </div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+      <li><a href="http://yangjian.me" target="_blank" title="YangJian">Alimon's Blog</a></li>
+      <li><a href="http://zespia.tw/hexo" target="_blank" title="Hexo">Hexo</a></li>
+      <li><a href=“http://www.tuzei8.com” target=“_blank” title=“Tuzei”>小熊的博客</a></li>
+      <li><a href="http://www.iaxure.com" target=“_blank” title="iaxure">小楼老师的博客</a></li>
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="http://leewin0821.github.io/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> “Hello ,I&#39;m Leewin →  (´･ω･｀)” <br/>
+			← This is my lovely pet Lambor</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/koalaleewin" target="_blank" title="weibo"></a>
+		
+		
+		<a href="https://twitter.com/LeewinDreamer" target="_blank" title="twitter"></a>
+		
+		
+		<a href="https://github.com/Leewin0821" target="_blank" title="github"></a>
+		
+		
+		<a href="https://www.facebook.com/leewin.zhang" target="_blank" title="facebook"></a>
+		
+	</div>
+		<p class="copyright">Powered by <a href="http://zespia.tw/hexo/" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/A-limon/pacman" target="_blank" title="Pacman">Pacman</a> © 2015 
+		
+		<a href="http://leewin0821.github.io" target="_blank" title="Leeiwn">Leeiwn</a>
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"leewin0821"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-53456463-1', 'leewin0821.github.io');  
+ga('send', 'pageview');
+</script>
+
+<div id="totop" style="position:fixed;bottom:150px;right:50px;cursor: pointer;">
+<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+</div>
+	<script src="/js/totop.js"></script>
+
+
+  </body>
+</html>

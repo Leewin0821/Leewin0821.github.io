@@ -1,0 +1,449 @@
+
+ <!DOCTYPE HTML>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  
+    <title>【Leewin的笔记】Spring MVC Note | Leewin’s Blog</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
+    
+    <meta name="author" content="Leeiwn">
+    
+    <meta name="description" itemprop="description" content="自己学习Spring MVC的一些随笔">
+    
+    
+    
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="LeewinDreamer" />
+    <meta name="twitter:title" content="【Leewin的笔记】Spring MVC Note | Leewin’s Blog" />
+      
+        <meta name="twitter:description" content="自己学习Spring MVC的一些随笔" />
+      
+    
+    
+    <link rel="alternative" href="http://leewin0821.github.io/atom.xml" title="Leewin’s Blog" type="application/atom+xml">
+    
+    
+    <link rel="icon" href="/img/favicon.ico">
+    
+    
+    <link rel="apple-touch-icon" href="/img/Wolf.png">
+    <link rel="apple-touch-icon-precomposed" href="/img/Wolf.png">
+    
+    <link rel="stylesheet" href="/css/style.css" type="text/css">
+
+</head>
+
+  <body>
+    <header>
+      <div>
+		
+			<div id="imglogo">
+				<a href="/"><img src="/img/logo.png" alt="Leewin’s Blog" title="Leewin’s Blog"/></a>
+			</div>
+			
+			<div id="textlogo">
+				<h1 class="site-name"><a href="/" title="Leewin’s Blog">Leewin’s Blog</a></h1>
+				<h2 class="blog-motto">□PM □UX ☑Dev</h2>
+			</div>
+			<div class="navbar"><a class="navbutton navmobile" href="#" title="菜单">
+			</a></div>
+			<nav class="animated">
+				<ul>
+					<ul>
+					 
+						<li><a href="/">Home</a></li>
+					
+						<li><a href="/archives">Archives</a></li>
+					
+						<li><a href="About/home.html">About</a></li>
+					
+					<li>
+					
+					<form class="search" action="//google.com/search" method="get" accept-charset="utf-8">
+						<label>Search</label>
+						<input type="text" id="search" name="q" autocomplete="off" maxlength="20" placeholder="搜索" />
+						<input type="hidden" name="q" value="site:leewin0821.github.io">
+					</form>
+					
+					</li>
+				</ul>
+			</nav>			
+</div>
+
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
+	<article itemprop="articleBody"> 
+		<header class="article-info clearfix">
+  <h1 itemprop="name">
+    
+      <a href="/2015/03/04/Spring MVC Note/" title="【Leewin的笔记】Spring MVC Note" itemprop="url">【Leewin的笔记】Spring MVC Note</a>
+  </h1>
+  <p class="article-author">By
+    
+      <a href="https://plus.google.com/104152981659148290000?rel=author" title="Leeiwn" target="_blank" itemprop="author">Leeiwn</a>
+    </p>
+  <p class="article-time">
+    <time datetime="2015-03-04T04:13:31.000Z" itemprop="datePublished">3月 4 2015</time>
+    更新日期:<time datetime="2015-03-04T17:02:45.000Z" itemprop="dateModified">3月 5 2015</time>
+    
+  </p>
+</header>
+	<div class="article-content">
+		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Request生命周期"><span class="toc-number">1.</span> <span class="toc-text">Request生命周期</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置DispatcherServlet"><span class="toc-number">2.</span> <span class="toc-text">配置DispatcherServlet</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Controller的用法"><span class="toc-number">3.</span> <span class="toc-text">Controller的用法</span></a></li></ol>
+		</div>
+		
+		<h3 id="Request生命周期">Request生命周期</h3>
+<ul>
+<li><p>Request会由DispatcherServlet前端控制器（单例）分配给* Controller控制器（由HandlerMapping处理器通过请求携带的URL信息来确定映射）。</p>
+</li>
+<li><p>Controller会卸下Request的负载，处理信息。在Controller完成逻辑处理后，会产生需要返回用户并在浏览器上显示的信息，即Model模型。最后Controller将Model打包，并标示出用于渲染输出的View名称，Controller接下来将Model和View名称发送回DispatcherServlet。</p>
+</li>
+<li><p>DispatcherServlet会使用ViewResolver视图解析器来为View名称匹配一个特定的View视图实现，它可能也可能不是JSP。随后交付Model数据给View。View使用Model数据渲染输出，并通过这个输出将响应对象传递给客户端。</p>
+</li>
+</ul>
+<h3 id="配置DispatcherServlet">配置DispatcherServlet</h3>
+<ul>
+<li>配置DispatcherServlet的第一步是在web.xml中放入<code>&lt;servlet&gt;</code>声明:       </li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="title">servlet</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="title">servlet-name</span>&gt;</span>application<span class="tag">&lt;/<span class="title">servlet-name</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="title">servlet-class</span>&gt;</span></div><div class="line">		org.springframework.web.servlet.DispatcherServlet</div><div class="line">	<span class="tag">&lt;/<span class="title">servlet-class</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="title">load-on-startup</span>&gt;</span>1<span class="tag">&lt;/<span class="title">load-on-startup</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="title">servlet</span>&gt;</span></div></pre></td></tr></table></figure>
+
+<p>默认情况下，DispatcherServlet在加载时会从一个基于这个Servlet名字的XML文件中加载Spring应用上下文。本例中即为application-servlet.xml（位于WEB-INF目录下）。</p>
+<ul>
+<li><p>一般推荐将DispatcherServlet映射到/，声明了它会作为默认的servlet并且会处理所有的请求，包括对静态资源的请求（Spring的mvc命名空间包含的<code>&lt;mvc:resource&gt;</code>元素处理静态资源的请求）。</p>
+</li>
+<li><p><code>&lt;mvc:resources mapping=“*/resources/**” location=“/resources/*”&gt;</code>表示所有以/resources路径开头的请求（包括其一下的子路径）都会自动由应用程序根目录下的/resources目录提供服务。</p>
+</li>
+</ul>
+<h3 id="Controller的用法">Controller的用法</h3>
+<ul>
+<li><p>控制器类需要在类之前加上@Controller注解。@Controller是@Compnent注解的一种具体化，也就是说<code>&lt;context:component-scan&gt;</code>将查找使用@Controller注解的类并将其注册为Bean，就像它们使用@Component注解那样。因此需要在application-servlet.xml文件中配置一个 <code>&lt;context:component-scan&gt;</code>来扫描控制器类所在的文件夹。</p>
+</li>
+<li><p>按照约定优于配置的开发模式，Controller返回的逻辑视图名称，假设为“home”，会被Resolver自动加上前后缀来确定其JSP文件在Web应用程序中模板的路径。假设在application-servlet.xml中：  </p>
+</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="title">bean</span> <span class="attribute">class</span>=<span class="value">...</span>&gt;</span></div><div class="line"><span class="tag">&lt;<span class="title">property</span> <span class="attribute">name</span>=<span class="value">"prefix"</span> <span class="attribute">value</span>=<span class="value">"/WEB-INF/views/"</span> /&gt;</span></div><div class="line"><span class="tag">&lt;<span class="title">property</span> <span class="attribute">name</span>=<span class="value">"suffix"</span> <span class="attribute">value</span>=<span class="value">".jsp"</span> /&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="title">bean</span>&gt;</span></div></pre></td></tr></table></figure>
+
+<p>那么View路径就应该是<em>/WEB-INF/views/home.jsp</em> 。</p>
+<ul>
+<li>为了创建被所有Servlet和Filter共享的Spring容器，需要使用Servlet监听器。ContextLoaderListener能够加载其他的配置文件到一个Spring Context中，因此先在web.xml中声明:</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="title">listener</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="title">listener-class</span>&gt;</span>  </div><div class="line">		org.springframework.web.context.ContextLoaderListener</div><div class="line">	<span class="tag">&lt;/<span class="title">listener-class</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="title">listener</span>&gt;</span></div></pre></td></tr></table></figure>
+
+<p>然后需要给ContextLoaderListener指定加载的配置文件，默认为 <em>/WEB-INF/applicationContext.xml</em> 这个Spring配置文件。但是这个文件本身没有做到将Context拆分为多个片段。所以在需要重写默认实现。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="title">context-param</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="title">param-name</span>&gt;</span>contextConfigLocation<span class="tag">&lt;/<span class="title">param-name</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="title">param-value</span>&gt;</span></div><div class="line">		/WEB-INF/application-security.xml</div><div class="line">		classpath:service-context.xml</div><div class="line">		classpath:persistence-context.xml</div><div class="line">		classpath:dataSource-context.xml</div><div class="line">	<span class="tag">&lt;/<span class="title">param-value</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="title">context-param</span>&gt;</span></div></pre></td></tr></table></figure>
+
+<ul>
+<li><p>在处理方法的参数前面加<code>@RequestParam</code>注解，如<code>@RequestParam(&quot;spitter&quot;) String username</code>，表明参数username的值应该根据Request中名为spitter的查询参数来获取。基于约定，如果处理方法的所有参数没有注解的话，将绑定到同名的查询参数上。在本例子中，如果处理方法参数名为spitter或者查询参数名为username，这样就可以省略掉<code>@RequestParam</code>注解了。如<code>@RequestParam(value=&quot;image&quot;, required=false) MultipartFile image</code>，表明参数image为MultipartFile类型，并且这个参数不是必需的。</p>
+</li>
+<li><p>如果在Controller中，一个方法，如</p>
+</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="annotation">@RequestMapping</span>(method=RequestMethod.GET, params=<span class="string">"new"</span>)</div><div class="line"><span class="keyword">public</span> String <span class="title">createSpitterProfile</span>(Model model) {</div><div class="line">	model.addAttribute(<span class="keyword">new</span> Spitter());</div><div class="line">	<span class="keyword">return</span> <span class="string">"spitters/edit"</span>;</div><div class="line">	}</div></pre></td></tr></table></figure>
+
+<p>它的<code>@RequestMapping</code>注解没有指定路径的话，那么这个方法会处理类级别<code>@RequestMapping</code>指定的路径，假设为 <em>/spitters</em> 。此外，将params属性设置为new，这意味着这个方法只处理对 <em>/spitters</em> 的HTTP GET请求并要求请求中必须包含名为new的查询参数。如下所示：</p>
+<figure class="highlight url"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">http</span>://localhost:<span class="number">8080</span>/Spitter/spitters?<span class="built_in">new</span></div></pre></td></tr></table></figure>
+
+<p>其中 <em>/Spitter</em> 由Servlet上下文决定，<em>/spitters</em> 由上面的Controller来处理，<em>?new</em> 就是“new”查询参数。</p>
+<ul>
+<li><p>View，如JSP，引用的对象存放在Model模型中。例如JSP的<code>&lt;c:forEach&gt;</code>标签的items属性以<code>${spittleList}</code>引用了Spittle列表，而spittleList就是Model的addAttribute()方法赋予它的名字。</p>
+</li>
+<li><p>在上面所指定的edit.jsp中，声明并使用Spring的表单绑定库：</p>
+</li>
+</ul>
+<figure class="highlight jsp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">&lt;%@ taglib prefix=<span class="string">"form"</span> uri=<span class="string">"http://www.springframework.org/tags/form"</span>%&gt;</div><div class="line">...</div><div class="line">&lt;form:form method=<span class="string">"POST"</span> modelAttribute=<span class="string">"spitter"</span> enctype=<span class="string">"multipart/form-data"</span>&gt;</div><div class="line">...</div><div class="line">&lt;form:input path=<span class="string">"fullName"</span> size=<span class="string">"15"</span> id=<span class="string">"user_full_name"</span>/&gt;</div><div class="line">...</div><div class="line">&lt;form:password path=<span class="string">"password"</span> size=<span class="string">"30"</span> showPassword=<span class="string">"true"</span> id=<span class="string">"user_password"</span>&gt;</div></pre></td></tr></table></figure>
+
+<p><code>&lt;form:form&gt;</code>标签将上面createSpitterProfile()方法所放入Model的Spitter对象（通过modelAttribute属性来标识）绑定到表单中的各个输入域。通过将enctype设置为 <em>multipart/form-data</em>, 每个输入域都将作为POST请求的不同部分进行提交，而不仅仅是其他的名称-值。这使得在其中的某一部分包含上传的图片文件数据成为可能。 <code>&lt;form:input&gt;</code>和<code>&lt;form:password&gt;</code>标签的path属性引用表单所绑定的Spitter对象的属性。当提交表单时，这些输入域中的值会放到Spitter对象中并提交到服务器进行处理。</p>
+<ul>
+<li>在Controller中，如果</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">return</span> <span class="string">"redirect:/spitters/"</span> + spitter.getUsername();</div></pre></td></tr></table></figure>
+
+<p>那么执行该方法之后，请求将重新定向到指定路径，以防用户点击浏览器“刷新”按钮之后会造成表单的重复提交。</p>
+<ul>
+<li>谁来响应 <em>/spitters/{username}</em> 请求是个大问题，本例采用在负责对应操作的Controller的方法上打注释来解决：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="annotation">@RequestMapping</span>(value=<span class="string">"/{username}"</span>, method=RequestMethod.GET)</div><div class="line"><span class="keyword">public</span> String <span class="title">showSpitterProfile</span>(@PathVariable String username, Model model) {</div><div class="line">model.addAttribute(spitterService.getSpitter(username));</div><div class="line"><span class="keyword">return</span> <span class="string">"spitters/view"</span>;</div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p>路径中{username}部分实际上是占位符，它对应使用了@PathVariable注解的username方法参数。请求路径中的该位置的值将作为username的值传递进去。</p>
+  
+	</div>
+		<footer class="article-footer clearfix">
+
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/Tech/">Tech</a>
+  </div>
+
+
+
+
+<div class="article-share" id="share">
+
+  <div data-url="http://leewin0821.github.io/2015/03/04/Spring MVC Note/" data-title="【Leewin的笔记】Spring MVC Note | Leewin’s Blog" data-tsina="koalaleewin" class="share clearfix">
+  </div>
+
+</div>
+</footer>   	       
+	</article>
+	
+<nav class="article-nav clearfix">
+ 
+ <div class="prev" >
+ <a href="/2015/03/04/Regex Note/" title="【Leewin的笔记】Regex Note">
+  <strong>PREVIOUS:</strong><br/>
+  <span>
+  【Leewin的笔记】Regex Note</span>
+</a>
+</div>
+
+
+<div class="next">
+<a href="/2015/03/04/Dependency Injection Note/"  title="【Leewin的笔记】Dependency Injection Note">
+ <strong>NEXT:</strong><br/> 
+ <span>【Leewin的笔记】Dependency Injection Note
+</span>
+</a>
+</div>
+
+</nav>
+
+	
+<section class="comment">
+	<div class="ds-thread"></div>
+</section>
+
+</div>  
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+  <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Request生命周期"><span class="toc-number">1.</span> <span class="toc-text">Request生命周期</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#配置DispatcherServlet"><span class="toc-number">2.</span> <span class="toc-text">配置DispatcherServlet</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Controller的用法"><span class="toc-number">3.</span> <span class="toc-text">Controller的用法</span></a></li></ol>
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+
+  
+<div class="tagslist">
+	<p class="asidetitle">标签</p>
+		<ul class="clearfix">
+		
+			<li><a href="/tags/Experience/" title="Experience">Experience<sup>1</sup></a></li>
+		
+			<li><a href="/tags/Tech/" title="Tech">Tech<sup>3</sup></a></li>
+		
+		</ul>
+</div>
+
+
+  
+  <div class="tagcloudlist">
+    <p class="asidetitle">标签云</p>
+    <div class="tagcloudlist clearfix">
+       <a href="/tags/Experience/" style="font-size: 10.00px; color: #7dc3de;">Experience</a><a href="/tags/Tech/" style="font-size: 20.00px; color: #800080;">Tech</a>
+    </div>
+  </div>
+
+
+  <div class="linkslist">
+  <p class="asidetitle">友情链接</p>
+    <ul>
+      <li><a href="http://yangjian.me" target="_blank" title="YangJian">Alimon's Blog</a></li>
+      <li><a href="http://zespia.tw/hexo" target="_blank" title="Hexo">Hexo</a></li>
+      <li><a href=“http://www.tuzei8.com” target=“_blank” title=“Tuzei”>小熊的博客</a></li>
+      <li><a href="http://www.iaxure.com" target=“_blank” title="iaxure">小楼老师的博客</a></li>
+    </ul>
+</div>
+
+  <div class="rsspart">
+	<a href="http://leewin0821.github.io/atom.xml" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
+	
+	<div class="line">
+		<span></span>
+		<div class="author"></div>
+	</div>
+	
+	
+	<section class="info">
+		<p> “Hello ,I&#39;m Leewin →  (´･ω･｀)” <br/>
+			← This is my lovely pet Lambor</p>
+	</section>
+	 
+	<div class="social-font" class="clearfix">
+		
+		<a href="http://weibo.com/koalaleewin" target="_blank" title="weibo"></a>
+		
+		
+		<a href="https://twitter.com/LeewinDreamer" target="_blank" title="twitter"></a>
+		
+		
+		<a href="https://github.com/Leewin0821" target="_blank" title="github"></a>
+		
+		
+		<a href="https://www.facebook.com/leewin.zhang" target="_blank" title="facebook"></a>
+		
+	</div>
+		<p class="copyright">Powered by <a href="http://zespia.tw/hexo/" target="_blank" title="hexo">hexo</a> and Theme by <a href="https://github.com/A-limon/pacman" target="_blank" title="Pacman">Pacman</a> © 2015 
+		
+		<a href="http://leewin0821.github.io" target="_blank" title="Leeiwn">Leeiwn</a>
+		
+		</p>
+</div>
+</footer>
+    <script src="/js/jquery-2.1.0.min.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+  $('.navbar').click(function(){
+    $('header nav').toggleClass('shownav');
+  });
+  var myWidth = 0;
+  function getSize(){
+    if( typeof( window.innerWidth ) == 'number' ) {
+      myWidth = window.innerWidth;
+    } else if( document.documentElement && document.documentElement.clientWidth) {
+      myWidth = document.documentElement.clientWidth;
+    };
+  };
+  var m = $('#main'),
+      a = $('#asidepart'),
+      c = $('.closeaside'),
+      o = $('.openaside');
+  $(window).resize(function(){
+    getSize(); 
+    if (myWidth >= 1024) {
+      $('header nav').removeClass('shownav');
+    }else
+    {
+      m.removeClass('moveMain');
+      a.css('display', 'block').removeClass('fadeOut');
+      o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
+        
+    }
+  });
+  c.click(function(){
+    a.addClass('fadeOut').css('display', 'none');
+    o.css('display', 'block').addClass('fadeIn');
+    m.addClass('moveMain');
+  });
+  o.click(function(){
+    o.css('display', 'none').removeClass('beforeFadeIn');
+    a.css('display', 'block').removeClass('fadeOut').addClass('fadeIn');      
+    m.removeClass('moveMain');
+  });
+  $(window).scroll(function(){
+    o.css("top",Math.max(80,260-$(this).scrollTop()));
+  });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
+});
+</script>
+
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var $this = $('.share'),
+      url = $this.attr('data-url'),
+      encodedUrl = encodeURIComponent(url),
+      title = $this.attr('data-title'),
+      tsina = $this.attr('data-tsina');
+  var html = [
+  '<a href="#" class="overlay" id="qrcode"></a>',
+  '<div class="qrcode clearfix"><span>扫描二维码分享到微信朋友圈</span><a class="qrclose" href="#share"></a><strong>Loading...Please wait</strong><img id="qrcode-pic" data-src="http://s.jiathis.com/qrcode.php?url=' + encodedUrl + '"/></div>',
+  '<a href="#textlogo" class="article-back-to-top" title="Top"></a>',
+  '<a href="https://www.facebook.com/sharer.php?u=' + encodedUrl + '" class="article-share-facebook" target="_blank" title="Facebook"></a>',
+  '<a href="#qrcode" class="article-share-qrcode" title="QRcode"></a>',
+  '<a href="https://twitter.com/intent/tweet?url=' + encodedUrl + '" class="article-share-twitter" target="_blank" title="Twitter"></a>',
+  '<a href="http://service.weibo.com/share/share.php?title='+title+'&url='+encodedUrl +'&ralateUid='+ tsina +'&searchPic=true&style=number' +'" class="article-share-weibo" target="_blank" title="Weibo"></a>',
+  '<span title="Share to"></span>'
+  ].join('');
+  $this.append(html);
+  $('.article-share-qrcode').click(function(){
+    var imgSrc = $('#qrcode-pic').attr('data-src');
+    $('#qrcode-pic').attr('src', imgSrc);
+    $('#qrcode-pic').load(function(){
+        $('.qrcode strong').text(' ');
+    });
+  });
+});     
+</script>
+
+
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"leewin0821"};
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+    || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script> 
+
+
+
+
+<script type="text/javascript">
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+ga('create', 'UA-53456463-1', 'leewin0821.github.io');  
+ga('send', 'pageview');
+</script>
+
+<div id="totop" style="position:fixed;bottom:150px;right:50px;cursor: pointer;">
+<a title="返回顶部"><img src="/img/scrollup.png"/></a>
+</div>
+	<script src="/js/totop.js"></script>
+
+
+  </body>
+</html>
