@@ -9,7 +9,7 @@
     
     <meta name="author" content="Leeiwn">
     
-    <meta name="description" itemprop="description" content="自己学习DI的一些随笔">
+    <meta name="description" itemprop="description" content="Ioc和DI是Spring框架的重要核心，深入理解它们对于掌握Spring很有帮助。同时了解DI的理念也能有助于更好地理解设计模式，更好地学习如何解耦。">
     
     
     
@@ -17,7 +17,7 @@
     <meta name="twitter:site" content="LeewinDreamer" />
     <meta name="twitter:title" content="【Leewin的笔记】Dependency Injection Note | Leewin’s Blog" />
       
-        <meta name="twitter:description" content="自己学习DI的一些随笔" />
+        <meta name="twitter:description" content="Ioc和DI是Spring框架的重要核心，深入理解它们对于掌握Spring很有帮助。同时了解DI的理念也能有助于更好地理解设计模式，更好地学习如何解耦。" />
       
     
     
@@ -86,7 +86,7 @@
     </p>
   <p class="article-time">
     <time datetime="2015-03-04T04:12:31.000Z" itemprop="datePublished">3月 4 2015</time>
-    更新日期:<time datetime="2015-03-04T17:02:03.000Z" itemprop="dateModified">3月 5 2015</time>
+    更新日期:<time datetime="2015-03-05T12:18:08.000Z" itemprop="dateModified">3月 5 2015</time>
     
   </p>
 </header>
@@ -95,10 +95,11 @@
 		
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
-		<ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#控制反转"><span class="toc-number">1.</span> <span class="toc-text">控制反转</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#依赖注入"><span class="toc-number">2.</span> <span class="toc-text">依赖注入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#构造函数注入_VS-_设值方法注入"><span class="toc-number">3.</span> <span class="toc-text">构造函数注入 VS. 设值方法注入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#代码配置_VS-_配置文件"><span class="toc-number">4.</span> <span class="toc-text">代码配置 VS. 配置文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#分离配置与使用"><span class="toc-number">5.</span> <span class="toc-text">分离配置与使用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#结论"><span class="toc-number">6.</span> <span class="toc-text">结论</span></a></li></ol>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Dependency_Injection_Note"><span class="toc-number">1.</span> <span class="toc-text">Dependency Injection Note</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#控制反转"><span class="toc-number">1.1.</span> <span class="toc-text">控制反转</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#依赖注入"><span class="toc-number">1.2.</span> <span class="toc-text">依赖注入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#构造函数注入_VS-_设值方法注入"><span class="toc-number">1.3.</span> <span class="toc-text">构造函数注入 VS. 设值方法注入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#代码配置_VS-_配置文件"><span class="toc-number">1.4.</span> <span class="toc-text">代码配置 VS. 配置文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#分离配置与使用"><span class="toc-number">1.5.</span> <span class="toc-text">分离配置与使用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#结论"><span class="toc-number">1.6.</span> <span class="toc-text">结论</span></a></li></ol></li></ol>
 		</div>
 		
-		<h3 id="控制反转">控制反转</h3>
+		<h2 id="Dependency_Injection_Note">Dependency Injection Note</h2>
+<h3 id="控制反转">控制反转</h3>
 <p>假设有一个MovieLister类：</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">class MovieLister...</div><div class="line">    <span class="keyword">public</span> Movie[] <span class="title">moviesDirectedBy</span>(String arg)</div><div class="line">    {</div><div class="line">        List allMovies = finder.findAll();</div><div class="line">        <span class="keyword">for</span> (Iterator it = allMovies.iterator(); it.hasNext();)</div><div class="line">        {</div><div class="line">            Movie movie = (Movie) it.next();</div><div class="line">            <span class="keyword">if</span> (!movie.getDirector().equals(arg))</div><div class="line">            {</div><div class="line">                it.remove();</div><div class="line">            }</div><div class="line">        }</div><div class="line">        <span class="keyword">return</span> (Movie[]) allMovies.toArray(<span class="keyword">new</span> Movie[allMovies.size()]);</div><div class="line">    }</div></pre></td></tr></table></figure>
 
@@ -133,7 +134,7 @@
 <ul>
 <li>第三步，设定配置文件spring.xml，这里使用XML文件配置</li>
 </ul>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="title">beans</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="title">bean</span> <span class="attribute">id</span>=<span class="value">"MovieLister"</span> <span class="attribute">class</span>=<span class="value">"spring.MovieLister"</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="title">property</span> <span class="attribute">name</span>=<span class="value">"finder"</span>&gt;</span></div><div class="line">            <span class="tag">&lt;<span class="title">ref</span> <span class="attribute">local</span>=<span class="value">"MovieFinder"</span>/&gt;</span></div><div class="line">        <span class="tag">&lt;/<span class="title">property</span>&gt;</span></div><div class="line">    <span class="tag">&lt;/<span class="title">bean</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="title">bean</span> <span class="attribute">id</span>=<span class="value">"MovieFinder"</span> <span class="attribute">class</span>=<span class="value">"spring.ColonMovieFinder"</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="title">property</span> <span class="attribute">name</span>=<span class="value">"filename"</span>&gt;</span></div><div class="line">            <span class="tag">&lt;<span class="title">value</span>&gt;</span>movies1.txt<span class="tag">&lt;/<span class="title">value</span>&gt;</span></div><div class="line">        <span class="tag">&lt;/<span class="title">property</span>&gt;</span></div><div class="line">    <span class="tag">&lt;/<span class="title">bean</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="title">beans</span>&gt;</span></div></pre></td></tr></table></figure>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="title">beans</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="title">bean</span> <span class="attribute">id</span>=<span class="value">"MovieLister"</span> <span class="attribute">class</span>=<span class="value">"spring.MovieLister"</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="title">property</span> <span class="attribute">name</span>=<span class="value">"finder"</span>&gt;</span></div><div class="line">            <span class="tag">&lt;<span class="title">ref</span> <span class="attribute">local</span>=<span class="value">"colonMovieFinder"</span>/&gt;</span></div><div class="line">        <span class="tag">&lt;/<span class="title">property</span>&gt;</span></div><div class="line">    <span class="tag">&lt;/<span class="title">bean</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="title">bean</span> <span class="attribute">id</span>=<span class="value">"colonMovieFinder"</span> <span class="attribute">class</span>=<span class="value">"spring.ColonMovieFinder"</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="title">property</span> <span class="attribute">name</span>=<span class="value">"filename"</span>&gt;</span></div><div class="line">            <span class="tag">&lt;<span class="title">value</span>&gt;</span>movies1.txt<span class="tag">&lt;/<span class="title">value</span>&gt;</span></div><div class="line">        <span class="tag">&lt;/<span class="title">property</span>&gt;</span></div><div class="line">    <span class="tag">&lt;/<span class="title">bean</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="title">bean</span> <span class="attribute">id</span>=<span class="value">"semicolonMovieFinder"</span> <span class="attribute">class</span>=<span class="value">"spring.SemicolonMovieFinder"</span>&gt;</span></div><div class="line">        <span class="tag">&lt;<span class="title">property</span> <span class="attribute">name</span>=<span class="value">"filename"</span>&gt;</span></div><div class="line">            <span class="tag">&lt;<span class="title">value</span>&gt;</span>movies2.txt<span class="tag">&lt;/<span class="title">value</span>&gt;</span></div><div class="line">        <span class="tag">&lt;/<span class="title">property</span>&gt;</span></div><div class="line">    <span class="tag">&lt;/<span class="title">bean</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="title">beans</span>&gt;</span></div></pre></td></tr></table></figure>
 
 <ul>
 <li>测试代码如下</li>
@@ -151,7 +152,7 @@
 <h3 id="分离配置与使用">分离配置与使用</h3>
 <p>所有这一切的关键都在于：服务的配置应该与使用分开，正如基本的设计原则：分离接口和实现。在面向对象程序里，我们在一个地方用条件逻辑来决定具体实例化哪一个类，以后的条件分支都由多态来实现，而不是继续重复前面的条件逻辑，这就是分离接口与实现的原则。</p>
 <h3 id="结论">结论</h3>
-<p>开发的组件需要交给多个应用程序使用时，依赖注入模式会是更好的选择。在DI的风格中，首选构造函数注入，如果遇到了某些特定的问题，再改用设值方法注入。最重要的是将服务的配置和应用程序内部对服务的使用分离.</p>
+<p>开发的组件需要交给多个应用程序使用时，依赖注入模式会是更好的选择。在DI的风格中，首选构造函数注入，如果遇到了某些特定的问题，再改用设值方法注入。最重要的是将服务的配置和应用程序内部对服务的使用分离。</p>
   
 	</div>
 		<footer class="article-footer clearfix">
@@ -204,7 +205,7 @@
 
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
-  <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#控制反转"><span class="toc-number">1.</span> <span class="toc-text">控制反转</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#依赖注入"><span class="toc-number">2.</span> <span class="toc-text">依赖注入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#构造函数注入_VS-_设值方法注入"><span class="toc-number">3.</span> <span class="toc-text">构造函数注入 VS. 设值方法注入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#代码配置_VS-_配置文件"><span class="toc-number">4.</span> <span class="toc-text">代码配置 VS. 配置文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#分离配置与使用"><span class="toc-number">5.</span> <span class="toc-text">分离配置与使用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#结论"><span class="toc-number">6.</span> <span class="toc-text">结论</span></a></li></ol>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Dependency_Injection_Note"><span class="toc-number">1.</span> <span class="toc-text">Dependency Injection Note</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#控制反转"><span class="toc-number">1.1.</span> <span class="toc-text">控制反转</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#依赖注入"><span class="toc-number">1.2.</span> <span class="toc-text">依赖注入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#构造函数注入_VS-_设值方法注入"><span class="toc-number">1.3.</span> <span class="toc-text">构造函数注入 VS. 设值方法注入</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#代码配置_VS-_配置文件"><span class="toc-number">1.4.</span> <span class="toc-text">代码配置 VS. 配置文件</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#分离配置与使用"><span class="toc-number">1.5.</span> <span class="toc-text">分离配置与使用</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#结论"><span class="toc-number">1.6.</span> <span class="toc-text">结论</span></a></li></ol></li></ol>
   </div>
 
 <div id="asidepart">
@@ -220,7 +221,7 @@
 		
 			<li><a href="/tags/Experience/" title="Experience">Experience<sup>1</sup></a></li>
 		
-			<li><a href="/tags/Tech/" title="Tech">Tech<sup>3</sup></a></li>
+			<li><a href="/tags/Tech/" title="Tech">Tech<sup>4</sup></a></li>
 		
 		</ul>
 </div>
