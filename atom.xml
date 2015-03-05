@@ -4,7 +4,7 @@
   <subtitle><![CDATA[□PM □UX ☑Dev]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://leewin0821.github.io/"/>
-  <updated>2015-03-05T12:24:52.240Z</updated>
+  <updated>2015-03-05T12:31:32.343Z</updated>
   <id>http://leewin0821.github.io/</id>
   
   <author>
@@ -113,10 +113,10 @@
     <link href="http://leewin0821.github.io/2015/03/04/Spring%20MVC%20Note/"/>
     <id>http://leewin0821.github.io/2015/03/04/Spring MVC Note/</id>
     <published>2015-03-04T04:13:31.000Z</published>
-    <updated>2015-03-05T12:12:20.000Z</updated>
+    <updated>2015-03-05T12:27:42.000Z</updated>
     <content type="html"><![CDATA[<h3 id="Request生命周期">Request生命周期</h3>
 <ul>
-<li><p>Request会由DispatcherServlet前端控制器（单例）分配给* Controller控制器（由HandlerMapping处理器通过请求携带的URL信息来确定映射）。</p>
+<li><p>Request会由DispatcherServlet前端控制器（单例）分配给 Controller控制器（由HandlerMapping处理器通过请求携带的URL信息来确定映射）。</p>
 </li>
 <li><p>Controller会卸下Request的负载，处理信息。在Controller完成逻辑处理后，会产生需要返回用户并在浏览器上显示的信息，即Model模型。最后Controller将Model打包，并标示出用于渲染输出的View名称，Controller接下来将Model和View名称发送回DispatcherServlet。</p>
 </li>
@@ -199,7 +199,7 @@
     <link href="http://leewin0821.github.io/2015/03/04/Dependency%20Injection%20Note/"/>
     <id>http://leewin0821.github.io/2015/03/04/Dependency Injection Note/</id>
     <published>2015-03-04T04:12:31.000Z</published>
-    <updated>2015-03-05T12:18:08.000Z</updated>
+    <updated>2015-03-05T12:29:57.000Z</updated>
     <content type="html"><![CDATA[<h2 id="Dependency_Injection_Note">Dependency Injection Note</h2>
 <h3 id="控制反转">控制反转</h3>
 <p>假设有一个MovieLister类：</p>
