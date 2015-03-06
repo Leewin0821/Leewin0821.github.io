@@ -4,7 +4,7 @@
   <subtitle><![CDATA[□PM □UX ☑Dev]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://leewin0821.github.io/"/>
-  <updated>2015-03-06T12:36:50.080Z</updated>
+  <updated>2015-03-06T12:38:26.755Z</updated>
   <id>http://leewin0821.github.io/</id>
   
   <author>
@@ -15,11 +15,11 @@
   <generator uri="http://zespia.tw/hexo/">Hexo</generator>
   
   <entry>
-    <title><![CDATA[最小化Spring XMl配置]]></title>
+    <title><![CDATA[【Leewin的笔记】最小化Spring XMl配置]]></title>
     <link href="http://leewin0821.github.io/2015/03/06/Minimize%20Spring%20XML%20Configuration/"/>
     <id>http://leewin0821.github.io/2015/03/06/Minimize Spring XML Configuration/</id>
     <published>2015-03-06T12:31:15.000Z</published>
-    <updated>2015-03-06T12:35:56.000Z</updated>
+    <updated>2015-03-06T12:38:13.000Z</updated>
     <content type="html"><![CDATA[<h2 id="最小化Spring_XML配置">最小化Spring XML配置</h2>
 <h3 id="自动装配Bean属性">自动装配Bean属性</h3>
 <p>如果我们的应用上下文中只有一个 <em>javax.sql.DataSource</em> 类型的Bean，那么任意一个依赖 <em>DataSource</em> 的其他Bean就是需要这个 <em>DataSource</em>  Bean。毕竟这里只有一个 <em>DataSource</em>  Bean。为了应对这种明确的装配场景，Spring提供了四种自动装配（autowiring）方式：</p>
